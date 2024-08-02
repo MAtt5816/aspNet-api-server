@@ -1,0 +1,536 @@
+{
+  "openapi" : "3.0.3",
+  "info" : {
+    "description" : "API schema for research project",
+    "title" : "API schema for research project",
+    "version" : "1.0.0"
+  },
+  "servers" : [ {
+    "url" : "localhost"
+  } ],
+  "tags" : [ {
+    "name" : "general"
+  }, {
+    "description" : "Access to student data.",
+    "name" : "student"
+  } ],
+  "paths" : {
+    "/hello" : {
+      "get" : {
+        "description" : "Returns \"Hello World!\" phrase.",
+        "responses" : {
+          "200" : {
+            "content" : {
+              "text/plain" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/HelloWorld"
+                }
+              }
+            },
+            "description" : "successful operation"
+          }
+        },
+        "summary" : "Returns \"Hello World!\" phrase",
+        "tags" : [ "general" ]
+      }
+    },
+    "/authorize" : {
+      "post" : {
+        "description" : "Returns JWT token for further authorization.",
+        "responses" : {
+          "200" : {
+            "content" : {
+              "text/plain" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/JwtToken"
+                }
+              }
+            },
+            "description" : "successful operation"
+          },
+          "401" : {
+            "description" : "unauthorized"
+          }
+        },
+        "security" : [ {
+          "jwt_token_auth" : [ ]
+        } ],
+        "summary" : "Get authorization JWT token",
+        "tags" : [ "general" ]
+      }
+    },
+    "/student" : {
+      "get" : {
+        "description" : "Find and return first n students ordered by its IDs.",
+        "parameters" : [ {
+          "description" : "Number of students to return.",
+          "explode" : true,
+          "in" : "query",
+          "name" : "results",
+          "required" : false,
+          "schema" : {
+            "default" : 1,
+            "minimum" : 1,
+            "type" : "integer"
+          },
+          "style" : "form"
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "items" : {
+                    "$ref" : "#/components/schemas/Student"
+                  },
+                  "type" : "array"
+                }
+              }
+            },
+            "description" : "successful operation"
+          },
+          "400" : {
+            "description" : "Invalid 'results' parameter value"
+          },
+          "401" : {
+            "description" : "unauthorized"
+          }
+        },
+        "security" : [ {
+          "student_data_auth" : [ ]
+        } ],
+        "summary" : "Find first n students",
+        "tags" : [ "student" ]
+      },
+      "post" : {
+        "description" : "Add a new students",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "items" : {
+                  "$ref" : "#/components/schemas/Student"
+                },
+                "type" : "array"
+              }
+            }
+          },
+          "description" : "Create a new students",
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "items" : {
+                    "$ref" : "#/components/schemas/Student"
+                  },
+                  "type" : "array"
+                }
+              }
+            },
+            "description" : "Created successfully"
+          },
+          "400" : {
+            "description" : "Invalid input"
+          },
+          "401" : {
+            "description" : "unauthorized"
+          },
+          "422" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "items" : {
+                    "$ref" : "#/components/schemas/ErrorMessage"
+                  },
+                  "type" : "array"
+                }
+              }
+            },
+            "description" : "Validation exception"
+          }
+        },
+        "security" : [ {
+          "student_data_auth" : [ ]
+        } ],
+        "summary" : "Add a new students",
+        "tags" : [ "student" ]
+      }
+    },
+    "/student/{studentId}" : {
+      "delete" : {
+        "description" : "Delete student by given ID.",
+        "parameters" : [ {
+          "description" : "ID of the student to delete",
+          "explode" : false,
+          "in" : "path",
+          "name" : "studentId",
+          "required" : true,
+          "schema" : {
+            "type" : "integer"
+          },
+          "style" : "simple"
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Deleted successfully"
+          },
+          "401" : {
+            "description" : "unauthorized"
+          },
+          "404" : {
+            "description" : "Student not found"
+          }
+        },
+        "security" : [ {
+          "student_data_auth" : [ ]
+        } ],
+        "summary" : "Delete student by ID",
+        "tags" : [ "student" ]
+      },
+      "patch" : {
+        "description" : "Update some fields of student by given student ID.",
+        "parameters" : [ {
+          "description" : "ID of the student to update",
+          "explode" : false,
+          "in" : "path",
+          "name" : "studentId",
+          "required" : true,
+          "schema" : {
+            "type" : "integer"
+          },
+          "style" : "simple"
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/Student"
+              }
+            }
+          },
+          "description" : "Update existing student",
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Student"
+                }
+              }
+            },
+            "description" : "Updated successfully"
+          },
+          "400" : {
+            "description" : "Invalid input"
+          },
+          "401" : {
+            "description" : "unauthorized"
+          },
+          "404" : {
+            "description" : "Student not found"
+          },
+          "422" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "items" : {
+                    "$ref" : "#/components/schemas/ErrorMessage"
+                  },
+                  "type" : "array"
+                }
+              }
+            },
+            "description" : "Validation exception"
+          }
+        },
+        "security" : [ {
+          "student_data_auth" : [ ]
+        } ],
+        "summary" : "Update some fields of student",
+        "tags" : [ "student" ]
+      },
+      "put" : {
+        "description" : "Update student by given ID.",
+        "parameters" : [ {
+          "description" : "ID of the student to update",
+          "explode" : false,
+          "in" : "path",
+          "name" : "studentId",
+          "required" : true,
+          "schema" : {
+            "type" : "integer"
+          },
+          "style" : "simple"
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/Student"
+              }
+            }
+          },
+          "description" : "Update existing student",
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Student"
+                }
+              }
+            },
+            "description" : "Updated successfully"
+          },
+          "400" : {
+            "description" : "Invalid input"
+          },
+          "401" : {
+            "description" : "unauthorized"
+          },
+          "404" : {
+            "description" : "Student not found"
+          },
+          "422" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "items" : {
+                    "$ref" : "#/components/schemas/ErrorMessage"
+                  },
+                  "type" : "array"
+                }
+              }
+            },
+            "description" : "Validation exception"
+          }
+        },
+        "security" : [ {
+          "student_data_auth" : [ ]
+        } ],
+        "summary" : "Update student",
+        "tags" : [ "student" ]
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "HelloWorld" : {
+        "example" : "Hello World!",
+        "type" : "string"
+      },
+      "JwtToken" : {
+        "example" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+        "type" : "string"
+      },
+      "Student" : {
+        "example" : {
+          "nat" : "AU",
+          "gender" : "female",
+          "last_name" : "Lucas",
+          "registered" : "2014-07-23T03:21:42.259Z",
+          "title" : "Miss",
+          "id_name" : "TFN",
+          "picture" : {
+            "thumbnail" : "https://randomuser.me/api/portraits/thumb/men/75.jpg",
+            "large" : "https://randomuser.me/api/portraits/men/75.jpg",
+            "medium" : "https://randomuser.me/api/portraits/med/men/75.jpg"
+          },
+          "phone" : "03-2662-3559",
+          "dob" : "1964-11-23T00:00:00.000+00:00",
+          "location" : {
+            "country" : "Australia",
+            "city" : "Tamworth",
+            "timezone" : "330",
+            "street_number" : 2595,
+            "postcode" : "6066",
+            "state" : "Queensland",
+            "street_name" : "Main Street"
+          },
+          "id" : 1,
+          "first_name" : "Terri",
+          "email" : "terri.lucas@example.com",
+          "id_value" : "230000682"
+        },
+        "properties" : {
+          "id" : {
+            "example" : 1,
+            "readOnly" : true,
+            "type" : "integer"
+          },
+          "gender" : {
+            "example" : "female",
+            "maxLength" : 10,
+            "type" : "string"
+          },
+          "title" : {
+            "example" : "Miss",
+            "maxLength" : 20,
+            "type" : "string"
+          },
+          "first_name" : {
+            "example" : "Terri",
+            "maxLength" : 50,
+            "type" : "string"
+          },
+          "last_name" : {
+            "example" : "Lucas",
+            "maxLength" : 50,
+            "type" : "string"
+          },
+          "email" : {
+            "example" : "terri.lucas@example.com",
+            "maxLength" : 100,
+            "type" : "string"
+          },
+          "dob" : {
+            "description" : "date of birth",
+            "example" : "1964-11-23",
+            "format" : "date",
+            "type" : "string"
+          },
+          "registered" : {
+            "description" : "date of registration",
+            "example" : "2014-07-23T03:21:42.259Z",
+            "format" : "date-time",
+            "type" : "string"
+          },
+          "phone" : {
+            "example" : "03-2662-3559",
+            "maxLength" : 20,
+            "type" : "string"
+          },
+          "id_name" : {
+            "description" : "national identification number type",
+            "example" : "TFN",
+            "maxLength" : 20,
+            "type" : "string"
+          },
+          "id_value" : {
+            "description" : "national identification number value",
+            "example" : "230000682",
+            "maxLength" : 50,
+            "type" : "string"
+          },
+          "nat" : {
+            "description" : "nationality short code",
+            "example" : "AU",
+            "maxLength" : 10,
+            "type" : "string"
+          },
+          "location" : {
+            "$ref" : "#/components/schemas/Location"
+          },
+          "picture" : {
+            "$ref" : "#/components/schemas/Picture"
+          }
+        },
+        "type" : "object"
+      },
+      "Location" : {
+        "example" : {
+          "country" : "Australia",
+          "city" : "Tamworth",
+          "timezone" : "330",
+          "street_number" : 2595,
+          "postcode" : "6066",
+          "state" : "Queensland",
+          "street_name" : "Main Street"
+        },
+        "properties" : {
+          "street_number" : {
+            "example" : 2595,
+            "type" : "integer"
+          },
+          "street_name" : {
+            "example" : "Main Street",
+            "maxLength" : 100,
+            "type" : "string"
+          },
+          "city" : {
+            "example" : "Tamworth",
+            "maxLength" : 100,
+            "type" : "string"
+          },
+          "state" : {
+            "example" : "Queensland",
+            "maxLength" : 100,
+            "type" : "string"
+          },
+          "country" : {
+            "example" : "Australia",
+            "maxLength" : 100,
+            "type" : "string"
+          },
+          "postcode" : {
+            "example" : "6066",
+            "maxLength" : 20,
+            "type" : "string"
+          },
+          "timezone" : {
+            "example" : "330",
+            "maxLength" : 10,
+            "type" : "string"
+          }
+        },
+        "type" : "object"
+      },
+      "Picture" : {
+        "example" : {
+          "thumbnail" : "https://randomuser.me/api/portraits/thumb/men/75.jpg",
+          "large" : "https://randomuser.me/api/portraits/men/75.jpg",
+          "medium" : "https://randomuser.me/api/portraits/med/men/75.jpg"
+        },
+        "properties" : {
+          "large" : {
+            "example" : "https://randomuser.me/api/portraits/men/75.jpg",
+            "maxLength" : 255,
+            "type" : "string"
+          },
+          "medium" : {
+            "example" : "https://randomuser.me/api/portraits/med/men/75.jpg",
+            "maxLength" : 255,
+            "type" : "string"
+          },
+          "thumbnail" : {
+            "example" : "https://randomuser.me/api/portraits/thumb/men/75.jpg",
+            "maxLength" : 255,
+            "type" : "string"
+          }
+        },
+        "type" : "object"
+      },
+      "ErrorMessage" : {
+        "properties" : {
+          "field" : {
+            "example" : "first_name",
+            "type" : "string"
+          },
+          "message" : {
+            "example" : "Input must be string",
+            "type" : "string"
+          }
+        },
+        "type" : "object"
+      }
+    },
+    "securitySchemes" : {
+      "jwt_token_auth" : {
+        "scheme" : "basic",
+        "type" : "http"
+      },
+      "student_data_auth" : {
+        "bearerFormat" : "JWT",
+        "scheme" : "bearer",
+        "type" : "http"
+      }
+    }
+  }
+}

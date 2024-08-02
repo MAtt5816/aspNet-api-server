@@ -1,16 +1,16 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aspNet-api-server", "aspNet-api-server\aspNet-api-server.csproj", "{01AC136B-268A-45DA-8082-1CD9FC4C75B8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aspNet-api-server", "aspNet-api-server\aspNet-api-server.csproj", "{6323EBAA-AD26-4778-B0FB-F33129F65656}"
 EndProject
 Global
-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{01AC136B-268A-45DA-8082-1CD9FC4C75B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{01AC136B-268A-45DA-8082-1CD9FC4C75B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{01AC136B-268A-45DA-8082-1CD9FC4C75B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{01AC136B-268A-45DA-8082-1CD9FC4C75B8}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
+    GlobalSection(SolutionConfigurationPlatforms) = preSolution
+        Debug|Any CPU = Debug|Any CPU
+        Release|Any CPU = Release|Any CPU
+    EndGlobalSection
+    GlobalSection(ProjectConfigurationPlatforms) = postSolution
+        {6323EBAA-AD26-4778-B0FB-F33129F65656}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+        {6323EBAA-AD26-4778-B0FB-F33129F65656}.Debug|Any CPU.Build.0 = Debug|Any CPU
+        {6323EBAA-AD26-4778-B0FB-F33129F65656}.Release|Any CPU.ActiveCfg = Release|Any CPU
+        {6323EBAA-AD26-4778-B0FB-F33129F65656}.Release|Any CPU.Build.0 = Release|Any CPU
+    EndGlobalSection
 EndGlobal
