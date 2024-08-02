@@ -11,6 +11,8 @@
 using System;
 using System.IO;
 using System.Reflection;
+using AspNetApiServer.Filters;
+using AspNetApiServer.Formatters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -20,12 +22,10 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
-using Org.OpenAPITools.Authentication;
-using Org.OpenAPITools.Filters;
-using Org.OpenAPITools.OpenApi;
-using Org.OpenAPITools.Formatters;
+using AspNetApiServer.Authentication;
+using AspNetApiServer.OpenApi;
 
-namespace Org.OpenAPITools
+namespace AspNetApiServer
 {
     /// <summary>
     /// Startup

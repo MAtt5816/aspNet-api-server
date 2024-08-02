@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Org.OpenAPITools.Authentication
+namespace AspNetApiServer.Authentication
 {
     /// <summary>
     /// A requirement that an ApiKey must be present.

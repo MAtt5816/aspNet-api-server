@@ -3,7 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Formatters;
 
-namespace Org.OpenAPITools.Formatters
+namespace AspNetApiServer.Formatters
 {
     // Input Type Formatter to allow model binding to Streams
     public class InputFormatterStream : InputFormatter

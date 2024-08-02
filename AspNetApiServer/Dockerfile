@@ -11,19 +11,19 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
 # Copy the code into the container
 WORKDIR /src
-COPY ["src/aspNet-api-server/aspNet-api-server.csproj", "aspNet-api-server/"]
+COPY ["AspNetApiServer/AspNetApiServer.csproj", "AspNetApiServer/"]
 
 # NuGet restore
-RUN dotnet restore "aspNet-api-server/aspNet-api-server.csproj"
-COPY ["aspNet-api-server/", "aspNet-api-server/"]
+RUN dotnet restore "AspNetApiServer/AspNetApiServer.csproj"
+COPY ["AspNetApiServer/", "AspNetApiServer/"]
 
 # Build the API
-WORKDIR "aspNet-api-server"
-RUN dotnet build "aspNet-api-server.csproj" -c Release -o /app/build
+WORKDIR "AspNetApiServer"
+RUN dotnet build "AspNetApiServer.csproj" -c Release -o /app/build
 
 # Publish it
 FROM build AS publish
-RUN dotnet publish "aspNet-api-server.csproj" -c Release -o /app/publish
+RUN dotnet publish "AspNetApiServer.csproj" -c Release -o /app/publish
 
 # Make the final image for publishing
 FROM base AS final
