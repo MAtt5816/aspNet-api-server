@@ -68,17 +68,7 @@ namespace AspNetApiServer.Controllers
         [SwaggerResponse(statusCode: 200, type: typeof(string), description: "successful operation")]
         public virtual IActionResult HelloGet()
         {
-
-            //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(200, default(string));
-            string exampleJson = null;
-            exampleJson = "";
-            
-            var example = exampleJson != null
-            ? JsonConvert.DeserializeObject<string>(exampleJson)
-            : default(string);
-            //TODO: Change the data returned
-            return new ObjectResult(example);
+            return StatusCode(200, "Hello World!");
         }
     }
 }
