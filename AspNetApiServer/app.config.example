@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+    <connectionStrings>
+        <add name="StudentDataContext" providerName="MySql.Data.MySqlClient"
+             connectionString="server=127.0.0.1;database=student_data;uid=root;password="/>
+    </connectionStrings>
+    <appSettings>
+        <add key="jwtKey" value="256-bit-secret-key"/>
+        <add key="jwtIssuer" value="ms"/>
+    </appSettings>
+</configuration>

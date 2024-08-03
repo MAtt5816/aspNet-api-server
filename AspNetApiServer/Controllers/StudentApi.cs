@@ -12,6 +12,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using AspNetApiServer.Attributes;
+using AspNetApiServer.Security;
+using AspNetApiServer.Models;
 using AspNetApiServer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -38,12 +40,12 @@ namespace AspNetApiServer.Controllers
         /// <response code="401">unauthorized</response>
         [HttpGet]
         [Route("/student")]
-        [Authorize]
+        [Authorize(AuthenticationSchemes = BearerAuthenticationHandler.SchemeName)]
         [ValidateModelState]
         [SwaggerOperation("StudentGet")]
         [SwaggerResponse(statusCode: 200, type: typeof(List<Student>), description: "successful operation")]
         public virtual IActionResult StudentGet([FromQuery (Name = "results")]int? results)
-        {
+        { 
 
             //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(200, default(List<Student>));
@@ -54,9 +56,9 @@ namespace AspNetApiServer.Controllers
             string exampleJson = null;
             exampleJson = "{\r\n  \"nat\" : \"AU\",\r\n  \"gender\" : \"female\",\r\n  \"last_name\" : \"Lucas\",\r\n  \"registered\" : \"2014-07-23T03:21:42.259Z\",\r\n  \"title\" : \"Miss\",\r\n  \"id_name\" : \"TFN\",\r\n  \"picture\" : {\r\n    \"thumbnail\" : \"https://randomuser.me/api/portraits/thumb/men/75.jpg\",\r\n    \"large\" : \"https://randomuser.me/api/portraits/men/75.jpg\",\r\n    \"medium\" : \"https://randomuser.me/api/portraits/med/men/75.jpg\"\r\n  },\r\n  \"phone\" : \"03-2662-3559\",\r\n  \"dob\" : \"1964-11-23T00:00:00.000+00:00\",\r\n  \"location\" : {\r\n    \"country\" : \"Australia\",\r\n    \"city\" : \"Tamworth\",\r\n    \"timezone\" : \"330\",\r\n    \"street_number\" : 2595,\r\n    \"postcode\" : \"6066\",\r\n    \"state\" : \"Queensland\",\r\n    \"street_name\" : \"Main Street\"\r\n  },\r\n  \"id\" : 1,\r\n  \"first_name\" : \"Terri\",\r\n  \"email\" : \"terri.lucas@example.com\",\r\n  \"id_value\" : \"230000682\"\r\n}";
             
-            var example = exampleJson != null
-            ? JsonConvert.DeserializeObject<List<Student>>(exampleJson)
-            : default(List<Student>);
+                        var example = exampleJson != null
+                        ? JsonConvert.DeserializeObject<List<Student>>(exampleJson)
+                : default(List<Student>);
             //TODO: Change the data returned
             return new ObjectResult(example);
         }
@@ -72,14 +74,13 @@ namespace AspNetApiServer.Controllers
         /// <response code="422">Validation exception</response>
         [HttpPost]
         [Route("/student")]
-        [Authorize]
-        [Consumes("application/json")]
+        [Authorize(AuthenticationSchemes = BearerAuthenticationHandler.SchemeName)]
         [ValidateModelState]
         [SwaggerOperation("StudentPost")]
         [SwaggerResponse(statusCode: 201, type: typeof(List<Student>), description: "Created successfully")]
         [SwaggerResponse(statusCode: 422, type: typeof(List<ErrorMessage>), description: "Validation exception")]
         public virtual IActionResult StudentPost([FromBody]List<Student> student)
-        {
+        { 
 
             //TODO: Uncomment the next line to return response 201 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(201, default(List<Student>));
@@ -92,9 +93,9 @@ namespace AspNetApiServer.Controllers
             string exampleJson = null;
             exampleJson = "{\r\n  \"nat\" : \"AU\",\r\n  \"gender\" : \"female\",\r\n  \"last_name\" : \"Lucas\",\r\n  \"registered\" : \"2014-07-23T03:21:42.259Z\",\r\n  \"title\" : \"Miss\",\r\n  \"id_name\" : \"TFN\",\r\n  \"picture\" : {\r\n    \"thumbnail\" : \"https://randomuser.me/api/portraits/thumb/men/75.jpg\",\r\n    \"large\" : \"https://randomuser.me/api/portraits/men/75.jpg\",\r\n    \"medium\" : \"https://randomuser.me/api/portraits/med/men/75.jpg\"\r\n  },\r\n  \"phone\" : \"03-2662-3559\",\r\n  \"dob\" : \"1964-11-23T00:00:00.000+00:00\",\r\n  \"location\" : {\r\n    \"country\" : \"Australia\",\r\n    \"city\" : \"Tamworth\",\r\n    \"timezone\" : \"330\",\r\n    \"street_number\" : 2595,\r\n    \"postcode\" : \"6066\",\r\n    \"state\" : \"Queensland\",\r\n    \"street_name\" : \"Main Street\"\r\n  },\r\n  \"id\" : 1,\r\n  \"first_name\" : \"Terri\",\r\n  \"email\" : \"terri.lucas@example.com\",\r\n  \"id_value\" : \"230000682\"\r\n}";
             
-            var example = exampleJson != null
-            ? JsonConvert.DeserializeObject<List<Student>>(exampleJson)
-            : default(List<Student>);
+                        var example = exampleJson != null
+                        ? JsonConvert.DeserializeObject<List<Student>>(exampleJson)
+                : default(List<Student>);
             //TODO: Change the data returned
             return new ObjectResult(example);
         }
@@ -109,11 +110,11 @@ namespace AspNetApiServer.Controllers
         /// <response code="404">Student not found</response>
         [HttpDelete]
         [Route("/student/{studentId}")]
-        [Authorize]
+        [Authorize(AuthenticationSchemes = BearerAuthenticationHandler.SchemeName)]
         [ValidateModelState]
         [SwaggerOperation("StudentStudentIdDelete")]
         public virtual IActionResult StudentStudentIdDelete([FromRoute (Name = "studentId")][Required]int studentId)
-        {
+        { 
 
             //TODO: Uncomment the next line to return response 204 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(204);
@@ -138,14 +139,13 @@ namespace AspNetApiServer.Controllers
         /// <response code="422">Validation exception</response>
         [HttpPatch]
         [Route("/student/{studentId}")]
-        [Authorize]
-        [Consumes("application/json")]
+        [Authorize(AuthenticationSchemes = BearerAuthenticationHandler.SchemeName)]
         [ValidateModelState]
         [SwaggerOperation("StudentStudentIdPatch")]
         [SwaggerResponse(statusCode: 200, type: typeof(Student), description: "Updated successfully")]
         [SwaggerResponse(statusCode: 422, type: typeof(List<ErrorMessage>), description: "Validation exception")]
         public virtual IActionResult StudentStudentIdPatch([FromRoute (Name = "studentId")][Required]int studentId, [FromBody]Student student)
-        {
+        { 
 
             //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(200, default(Student));
@@ -160,9 +160,9 @@ namespace AspNetApiServer.Controllers
             string exampleJson = null;
             exampleJson = "{\r\n  \"nat\" : \"AU\",\r\n  \"gender\" : \"female\",\r\n  \"last_name\" : \"Lucas\",\r\n  \"registered\" : \"2014-07-23T03:21:42.259Z\",\r\n  \"title\" : \"Miss\",\r\n  \"id_name\" : \"TFN\",\r\n  \"picture\" : {\r\n    \"thumbnail\" : \"https://randomuser.me/api/portraits/thumb/men/75.jpg\",\r\n    \"large\" : \"https://randomuser.me/api/portraits/men/75.jpg\",\r\n    \"medium\" : \"https://randomuser.me/api/portraits/med/men/75.jpg\"\r\n  },\r\n  \"phone\" : \"03-2662-3559\",\r\n  \"dob\" : \"1964-11-23T00:00:00.000+00:00\",\r\n  \"location\" : {\r\n    \"country\" : \"Australia\",\r\n    \"city\" : \"Tamworth\",\r\n    \"timezone\" : \"330\",\r\n    \"street_number\" : 2595,\r\n    \"postcode\" : \"6066\",\r\n    \"state\" : \"Queensland\",\r\n    \"street_name\" : \"Main Street\"\r\n  },\r\n  \"id\" : 1,\r\n  \"first_name\" : \"Terri\",\r\n  \"email\" : \"terri.lucas@example.com\",\r\n  \"id_value\" : \"230000682\"\r\n}";
             
-            var example = exampleJson != null
-            ? JsonConvert.DeserializeObject<Student>(exampleJson)
-            : default(Student);
+                        var example = exampleJson != null
+                        ? JsonConvert.DeserializeObject<Student>(exampleJson)
+                : default(Student);
             //TODO: Change the data returned
             return new ObjectResult(example);
         }
@@ -180,14 +180,13 @@ namespace AspNetApiServer.Controllers
         /// <response code="422">Validation exception</response>
         [HttpPut]
         [Route("/student/{studentId}")]
-        [Authorize]
-        [Consumes("application/json")]
+        [Authorize(AuthenticationSchemes = BearerAuthenticationHandler.SchemeName)]
         [ValidateModelState]
         [SwaggerOperation("StudentStudentIdPut")]
         [SwaggerResponse(statusCode: 200, type: typeof(Student), description: "Updated successfully")]
         [SwaggerResponse(statusCode: 422, type: typeof(List<ErrorMessage>), description: "Validation exception")]
         public virtual IActionResult StudentStudentIdPut([FromRoute (Name = "studentId")][Required]int studentId, [FromBody]Student student)
-        {
+        { 
 
             //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(200, default(Student));
@@ -202,9 +201,9 @@ namespace AspNetApiServer.Controllers
             string exampleJson = null;
             exampleJson = "{\r\n  \"nat\" : \"AU\",\r\n  \"gender\" : \"female\",\r\n  \"last_name\" : \"Lucas\",\r\n  \"registered\" : \"2014-07-23T03:21:42.259Z\",\r\n  \"title\" : \"Miss\",\r\n  \"id_name\" : \"TFN\",\r\n  \"picture\" : {\r\n    \"thumbnail\" : \"https://randomuser.me/api/portraits/thumb/men/75.jpg\",\r\n    \"large\" : \"https://randomuser.me/api/portraits/men/75.jpg\",\r\n    \"medium\" : \"https://randomuser.me/api/portraits/med/men/75.jpg\"\r\n  },\r\n  \"phone\" : \"03-2662-3559\",\r\n  \"dob\" : \"1964-11-23T00:00:00.000+00:00\",\r\n  \"location\" : {\r\n    \"country\" : \"Australia\",\r\n    \"city\" : \"Tamworth\",\r\n    \"timezone\" : \"330\",\r\n    \"street_number\" : 2595,\r\n    \"postcode\" : \"6066\",\r\n    \"state\" : \"Queensland\",\r\n    \"street_name\" : \"Main Street\"\r\n  },\r\n  \"id\" : 1,\r\n  \"first_name\" : \"Terri\",\r\n  \"email\" : \"terri.lucas@example.com\",\r\n  \"id_value\" : \"230000682\"\r\n}";
             
-            var example = exampleJson != null
-            ? JsonConvert.DeserializeObject<Student>(exampleJson)
-            : default(Student);
+                        var example = exampleJson != null
+                        ? JsonConvert.DeserializeObject<Student>(exampleJson)
+                : default(Student);
             //TODO: Change the data returned
             return new ObjectResult(example);
         }

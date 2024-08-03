@@ -14,6 +14,7 @@ using System.Text;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using AspNetApiServer.Converters;
@@ -50,6 +51,7 @@ namespace AspNetApiServer.Models
         /// Gets or Sets FirstName
         /// </summary>
         [MaxLength(50)]
+        [Column("first_name")]
         [DataMember(Name="first_name", EmitDefaultValue=false)]
         public string FirstName { get; set; }
 
@@ -57,6 +59,7 @@ namespace AspNetApiServer.Models
         /// Gets or Sets LastName
         /// </summary>
         [MaxLength(50)]
+        [Column("last_name")]
         [DataMember(Name="last_name", EmitDefaultValue=false)]
         public string LastName { get; set; }
 
@@ -93,6 +96,7 @@ namespace AspNetApiServer.Models
         /// </summary>
         /// <value>national identification number type</value>
         [MaxLength(20)]
+        [Column("id_name")]
         [DataMember(Name="id_name", EmitDefaultValue=false)]
         public string IdName { get; set; }
 
@@ -101,6 +105,7 @@ namespace AspNetApiServer.Models
         /// </summary>
         /// <value>national identification number value</value>
         [MaxLength(50)]
+        [Column("id_value")]
         [DataMember(Name="id_value", EmitDefaultValue=false)]
         public string IdValue { get; set; }
 

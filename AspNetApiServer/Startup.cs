@@ -13,6 +13,8 @@ using System.IO;
 using System.Reflection;
 using AspNetApiServer.Filters;
 using AspNetApiServer.Formatters;
+using AspNetApiServer.Security;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -68,6 +70,12 @@ namespace AspNetApiServer
                     });
                 });
 
+            services.AddAuthentication(BasicAuthenticationHandler.SchemeName)
+                .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>(BasicAuthenticationHandler.SchemeName, null);
+
+            services.AddAuthentication(BearerAuthenticationHandler.SchemeName)
+                .AddScheme<AuthenticationSchemeOptions, BearerAuthenticationHandler>(BearerAuthenticationHandler.SchemeName, null);
+            
             services
                 .AddSwaggerGen(c =>
                 {
@@ -82,7 +90,7 @@ namespace AspNetApiServer
                         {
                             Name = "OpenAPI-Generator Contributors",
                             Url = new Uri("https://github.com/openapitools/openapi-generator"),
-                            Email = ""
+                           Email = ""
                         },
                         License = new OpenApiLicense
                         {
@@ -94,6 +102,19 @@ namespace AspNetApiServer
                     c.CustomSchemaIds(type => type.FriendlyId(true));
                     c.IncludeXmlComments($"{AppContext.BaseDirectory}{Path.DirectorySeparatorChar}{Assembly.GetEntryAssembly().GetName().Name}.xml");
 
+                    c.AddSecurityDefinition("jwt_token_auth", new OpenApiSecurityScheme
+                    {
+                        Type = SecuritySchemeType.Http,
+                        Scheme = "basic"
+                    });
+                    c.AddSecurityDefinition("student_data_auth", new OpenApiSecurityScheme
+                    {
+                        Type = SecuritySchemeType.Http,
+                        In = ParameterLocation.Header,
+                        Name = "Authorization",
+                        Scheme = "Bearer"
+                    });
+                    
                     // Include DataAnnotation attributes on Controller Action parameters as OpenAPI validation rules (e.g required, pattern, ..)
                     // Use [ValidateModelState] on Actions to actually validate it in C# as well!
                     c.OperationFilter<GeneratePathParamsValidationFilter>();
@@ -136,6 +157,7 @@ namespace AspNetApiServer
                     // c.SwaggerEndpoint("/openapi-original.json", "API schema for research project Original");
                 });
             app.UseRouting();
+            app.UseAuthorization();
             app.UseEndpoints(endpoints =>
                 {
                     endpoints.MapControllers();

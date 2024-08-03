@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using AspNetApiServer.Attributes;
+using AspNetApiServer.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
@@ -36,24 +37,14 @@ namespace AspNetApiServer.Controllers
         /// <response code="401">unauthorized</response>
         [HttpPost]
         [Route("/authorize")]
+        [Authorize(AuthenticationSchemes = BasicAuthenticationHandler.SchemeName)]
         [ValidateModelState]
         [SwaggerOperation("AuthorizePost")]
         [SwaggerResponse(statusCode: 200, type: typeof(string), description: "successful operation")]
         public virtual IActionResult AuthorizePost()
         {
-
-            //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(200, default(string));
-            //TODO: Uncomment the next line to return response 401 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(401);
-            string exampleJson = null;
-            exampleJson = "";
-            
-            var example = exampleJson != null
-            ? JsonConvert.DeserializeObject<string>(exampleJson)
-            : default(string);
-            //TODO: Change the data returned
-            return new ObjectResult(example);
+            string token = Helpers.JwtHelper.GenerateToken();
+            return StatusCode(200, token);
         }
 
         /// <summary>
@@ -67,7 +58,7 @@ namespace AspNetApiServer.Controllers
         [SwaggerOperation("HelloGet")]
         [SwaggerResponse(statusCode: 200, type: typeof(string), description: "successful operation")]
         public virtual IActionResult HelloGet()
-        {
+        { 
             return StatusCode(200, "Hello World!");
         }
     }

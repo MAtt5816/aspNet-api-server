@@ -14,6 +14,7 @@ using System.Text;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using AspNetApiServer.Converters;
@@ -24,8 +25,17 @@ namespace AspNetApiServer.Models
     /// 
     /// </summary>
     [DataContract]
+    [Table("pictures")]
     public partial class Picture : IEquatable<Picture>
     {
+        /// <summary>
+        /// Gets or Sets StudentId
+        /// </summary>
+        [Key]
+        [Column("student_id")]
+        [DataMember(Name="student_id", EmitDefaultValue=true)]
+        public int StudentId { get; set; }
+        
         /// <summary>
         /// Gets or Sets Large
         /// </summary>

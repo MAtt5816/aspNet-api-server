@@ -90,6 +90,25 @@ namespace AspNetApiServer.Filters
                         openapiParam.Schema.MinLength = rangeMin;
                         openapiParam.Schema.MaxLength = rangeMax;
                     }
+                    
+                    // auth
+                    operation.Security = new List<OpenApiSecurityRequirement>
+                    {
+                        new OpenApiSecurityRequirement
+                        {
+                            [new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "jwt_token_auth" }
+                            }] = new List<string>()
+                        },
+                        new OpenApiSecurityRequirement
+                        {
+                            [new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "student_data_auth" }
+                            }] = new List<string>()
+                        }
+                    };
                 }
             }
         }

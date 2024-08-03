@@ -14,6 +14,7 @@ using System.Text;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using AspNetApiServer.Converters;
@@ -24,11 +25,21 @@ namespace AspNetApiServer.Models
     /// 
     /// </summary>
     [DataContract]
+    [Table("locations")]
     public partial class Location : IEquatable<Location>
     {
         /// <summary>
+        /// Gets or Sets StudentId
+        /// </summary>
+        [Key]
+        [Column("student_id")]
+        [DataMember(Name="student_id", EmitDefaultValue=true)]
+        public int StudentId { get; set; }
+        
+        /// <summary>
         /// Gets or Sets StreetNumber
         /// </summary>
+        [Column("street_number")]
         [DataMember(Name="street_number", EmitDefaultValue=true)]
         public int StreetNumber { get; set; }
 
@@ -36,6 +47,7 @@ namespace AspNetApiServer.Models
         /// Gets or Sets StreetName
         /// </summary>
         [MaxLength(100)]
+        [Column("street_name")]
         [DataMember(Name="street_name", EmitDefaultValue=false)]
         public string StreetName { get; set; }
 
