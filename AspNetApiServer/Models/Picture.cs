@@ -58,6 +58,17 @@ namespace AspNetApiServer.Models
         public string Thumbnail { get; set; }
 
         /// <summary>
+        /// Copy and set fields values based on fields from passed object
+        /// </summary>
+        /// <param name="objectToCopy">Object from which will be copy fields values</param>
+        public void CopyFieldsFromGivenObject(Picture objectToCopy)
+        {
+            this.Large = objectToCopy.Large;
+            this.Medium = objectToCopy.Medium;
+            this.Thumbnail = objectToCopy.Thumbnail;
+        }
+        
+        /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>

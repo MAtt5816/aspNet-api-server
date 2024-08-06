@@ -18,9 +18,11 @@ using AspNetApiServer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace AspNetApiServer.Controllers
 { 
@@ -45,29 +47,31 @@ namespace AspNetApiServer.Controllers
         [SwaggerOperation("StudentGet")]
         [SwaggerResponse(statusCode: 200, type: typeof(List<Student>), description: "successful operation")]
         public virtual IActionResult StudentGet([FromQuery (Name = "results")]int? results)
-        { 
+        {
+            if (results >= 1)
+            {
+                using var db = new DB.StudentDataContext();
+                IEnumerable<Student> students = db.Students.Include(s => s.Location)
+                    .Include(s => s.Picture).Take((int)results);
+                return StatusCode(200, students.ToList());
+            }
+            else
+            {
+                var message = new ErrorMessage()
+                {
+                    Field = "results",
+                    Message = "Results number must be greater than or equal to 1."
+                };
 
-            //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(200, default(List<Student>));
-            //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(400);
-            //TODO: Uncomment the next line to return response 401 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(401);
-            string exampleJson = null;
-            exampleJson = "{\r\n  \"nat\" : \"AU\",\r\n  \"gender\" : \"female\",\r\n  \"last_name\" : \"Lucas\",\r\n  \"registered\" : \"2014-07-23T03:21:42.259Z\",\r\n  \"title\" : \"Miss\",\r\n  \"id_name\" : \"TFN\",\r\n  \"picture\" : {\r\n    \"thumbnail\" : \"https://randomuser.me/api/portraits/thumb/men/75.jpg\",\r\n    \"large\" : \"https://randomuser.me/api/portraits/men/75.jpg\",\r\n    \"medium\" : \"https://randomuser.me/api/portraits/med/men/75.jpg\"\r\n  },\r\n  \"phone\" : \"03-2662-3559\",\r\n  \"dob\" : \"1964-11-23T00:00:00.000+00:00\",\r\n  \"location\" : {\r\n    \"country\" : \"Australia\",\r\n    \"city\" : \"Tamworth\",\r\n    \"timezone\" : \"330\",\r\n    \"street_number\" : 2595,\r\n    \"postcode\" : \"6066\",\r\n    \"state\" : \"Queensland\",\r\n    \"street_name\" : \"Main Street\"\r\n  },\r\n  \"id\" : 1,\r\n  \"first_name\" : \"Terri\",\r\n  \"email\" : \"terri.lucas@example.com\",\r\n  \"id_value\" : \"230000682\"\r\n}";
-            
-                        var example = exampleJson != null
-                        ? JsonConvert.DeserializeObject<List<Student>>(exampleJson)
-                : default(List<Student>);
-            //TODO: Change the data returned
-            return new ObjectResult(example);
+                return StatusCode(400, message);
+            }
         }
 
         /// <summary>
         /// Add a new students
         /// </summary>
         /// <remarks>Add a new students</remarks>
-        /// <param name="student">Create a new students</param>
+        /// <param name="students">Create a new students</param>
         /// <response code="201">Created successfully</response>
         /// <response code="400">Invalid input</response>
         /// <response code="401">unauthorized</response>
@@ -79,25 +83,30 @@ namespace AspNetApiServer.Controllers
         [SwaggerOperation("StudentPost")]
         [SwaggerResponse(statusCode: 201, type: typeof(List<Student>), description: "Created successfully")]
         [SwaggerResponse(statusCode: 422, type: typeof(List<ErrorMessage>), description: "Validation exception")]
-        public virtual IActionResult StudentPost([FromBody]List<Student> student)
+        public virtual IActionResult StudentPost([FromBody]List<Student> students)
         { 
+            using var db = new DB.StudentDataContext();
+            foreach (Student student in students)
+            {
+                if (db.Students.Find(student.Id) == null)
+                {
+                    student.Registered = DateTime.Now;
+                    db.Students.Add(student);
+                }
+                else
+                {
+                    var message = new ErrorMessage()
+                    {
+                        Field = "Id",
+                        Message = $"Id {student.Id.ToString()} already exists in database"
+                    };
 
-            //TODO: Uncomment the next line to return response 201 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(201, default(List<Student>));
-            //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(400);
-            //TODO: Uncomment the next line to return response 401 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(401);
-            //TODO: Uncomment the next line to return response 422 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(422, default(List<ErrorMessage>));
-            string exampleJson = null;
-            exampleJson = "{\r\n  \"nat\" : \"AU\",\r\n  \"gender\" : \"female\",\r\n  \"last_name\" : \"Lucas\",\r\n  \"registered\" : \"2014-07-23T03:21:42.259Z\",\r\n  \"title\" : \"Miss\",\r\n  \"id_name\" : \"TFN\",\r\n  \"picture\" : {\r\n    \"thumbnail\" : \"https://randomuser.me/api/portraits/thumb/men/75.jpg\",\r\n    \"large\" : \"https://randomuser.me/api/portraits/men/75.jpg\",\r\n    \"medium\" : \"https://randomuser.me/api/portraits/med/men/75.jpg\"\r\n  },\r\n  \"phone\" : \"03-2662-3559\",\r\n  \"dob\" : \"1964-11-23T00:00:00.000+00:00\",\r\n  \"location\" : {\r\n    \"country\" : \"Australia\",\r\n    \"city\" : \"Tamworth\",\r\n    \"timezone\" : \"330\",\r\n    \"street_number\" : 2595,\r\n    \"postcode\" : \"6066\",\r\n    \"state\" : \"Queensland\",\r\n    \"street_name\" : \"Main Street\"\r\n  },\r\n  \"id\" : 1,\r\n  \"first_name\" : \"Terri\",\r\n  \"email\" : \"terri.lucas@example.com\",\r\n  \"id_value\" : \"230000682\"\r\n}";
-            
-                        var example = exampleJson != null
-                        ? JsonConvert.DeserializeObject<List<Student>>(exampleJson)
-                : default(List<Student>);
-            //TODO: Change the data returned
-            return new ObjectResult(example);
+                    return StatusCode(422, message);
+                }
+            }
+            db.SaveChanges();
+
+            return StatusCode(201, students);
         }
 
         /// <summary>
@@ -114,16 +123,19 @@ namespace AspNetApiServer.Controllers
         [ValidateModelState]
         [SwaggerOperation("StudentStudentIdDelete")]
         public virtual IActionResult StudentStudentIdDelete([FromRoute (Name = "studentId")][Required]int studentId)
-        { 
+        {
+            using var db = new DB.StudentDataContext();
+            var student = db.Students.Include(s => s.Location)
+                .Include(s => s.Picture).FirstOrDefault(s => s.Id == studentId);
 
-            //TODO: Uncomment the next line to return response 204 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(204);
-            //TODO: Uncomment the next line to return response 401 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(401);
-            //TODO: Uncomment the next line to return response 404 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(404);
-
-            throw new NotImplementedException();
+            if (student != null)
+            {
+                db.Students.Remove(student);
+                db.SaveChanges();
+                
+                return StatusCode(204);
+            }
+            return StatusCode(404);
         }
 
         /// <summary>
@@ -131,7 +143,7 @@ namespace AspNetApiServer.Controllers
         /// </summary>
         /// <remarks>Update some fields of student by given student ID.</remarks>
         /// <param name="studentId">ID of the student to update</param>
-        /// <param name="student">Update existing student</param>
+        /// <param name="jsonObject">Update existing student</param>
         /// <response code="200">Updated successfully</response>
         /// <response code="400">Invalid input</response>
         /// <response code="401">unauthorized</response>
@@ -144,27 +156,56 @@ namespace AspNetApiServer.Controllers
         [SwaggerOperation("StudentStudentIdPatch")]
         [SwaggerResponse(statusCode: 200, type: typeof(Student), description: "Updated successfully")]
         [SwaggerResponse(statusCode: 422, type: typeof(List<ErrorMessage>), description: "Validation exception")]
-        public virtual IActionResult StudentStudentIdPatch([FromRoute (Name = "studentId")][Required]int studentId, [FromBody]Student student)
-        { 
+        public virtual IActionResult StudentStudentIdPatch([FromRoute (Name = "studentId")][Required]int studentId, [FromBody]JObject jsonObject)
+        {
+            using var db = new DB.StudentDataContext();
+            var dbStudent = db.Students.Include(s => s.Location)
+                .Include(s => s.Picture).FirstOrDefault(s => s.Id == studentId);
+            JObject jsonStudent = JObject.Parse(JsonConvert.SerializeObject(dbStudent));
+            if (dbStudent != null)
+            {
+                foreach (var jsonField in jsonObject)
+                {
+                    try
+                    {
+                        if (jsonField.Key.Equals("location", StringComparison.OrdinalIgnoreCase)
+                            || jsonField.Key.Equals("picture", StringComparison.OrdinalIgnoreCase))
+                        {
+                            foreach (var jsonSubfield in jsonField.Value as JObject ?? [])
+                            {
+                                jsonStudent[jsonField.Key][jsonSubfield.Key] = jsonSubfield.Value;
+                            }
+                        }
+                        else
+                            jsonStudent[jsonField.Key] = jsonField.Value;
+                    }
+                    catch
+                    {
+                        var message = new ErrorMessage()
+                        {
+                            Field = jsonField.Key,
+                            Message = "Given field doesn't match any student class fields."
+                        };
 
-            //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(200, default(Student));
-            //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(400);
-            //TODO: Uncomment the next line to return response 401 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(401);
-            //TODO: Uncomment the next line to return response 404 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(404);
-            //TODO: Uncomment the next line to return response 422 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(422, default(List<ErrorMessage>));
-            string exampleJson = null;
-            exampleJson = "{\r\n  \"nat\" : \"AU\",\r\n  \"gender\" : \"female\",\r\n  \"last_name\" : \"Lucas\",\r\n  \"registered\" : \"2014-07-23T03:21:42.259Z\",\r\n  \"title\" : \"Miss\",\r\n  \"id_name\" : \"TFN\",\r\n  \"picture\" : {\r\n    \"thumbnail\" : \"https://randomuser.me/api/portraits/thumb/men/75.jpg\",\r\n    \"large\" : \"https://randomuser.me/api/portraits/men/75.jpg\",\r\n    \"medium\" : \"https://randomuser.me/api/portraits/med/men/75.jpg\"\r\n  },\r\n  \"phone\" : \"03-2662-3559\",\r\n  \"dob\" : \"1964-11-23T00:00:00.000+00:00\",\r\n  \"location\" : {\r\n    \"country\" : \"Australia\",\r\n    \"city\" : \"Tamworth\",\r\n    \"timezone\" : \"330\",\r\n    \"street_number\" : 2595,\r\n    \"postcode\" : \"6066\",\r\n    \"state\" : \"Queensland\",\r\n    \"street_name\" : \"Main Street\"\r\n  },\r\n  \"id\" : 1,\r\n  \"first_name\" : \"Terri\",\r\n  \"email\" : \"terri.lucas@example.com\",\r\n  \"id_value\" : \"230000682\"\r\n}";
+                        return StatusCode(422, message);
+                    }
+                }
+            }
+            else
+            {
+                return StatusCode(404);
+            }
+
+            Student? stud = jsonStudent.ToObject<Student>();
+            if (stud == null)
+            {
+                return StatusCode(400);
+            }
             
-                        var example = exampleJson != null
-                        ? JsonConvert.DeserializeObject<Student>(exampleJson)
-                : default(Student);
-            //TODO: Change the data returned
-            return new ObjectResult(example);
+            dbStudent.CopyFieldsFromGivenObject(stud);
+            db.SaveChanges();
+
+            return StatusCode(200, dbStudent);
         }
 
         /// <summary>
@@ -187,25 +228,21 @@ namespace AspNetApiServer.Controllers
         [SwaggerResponse(statusCode: 422, type: typeof(List<ErrorMessage>), description: "Validation exception")]
         public virtual IActionResult StudentStudentIdPut([FromRoute (Name = "studentId")][Required]int studentId, [FromBody]Student student)
         { 
+            using var db = new DB.StudentDataContext();
+            var dbStudent = db.Students.Include(s => s.Location)
+                .Include(s => s.Picture).FirstOrDefault(s => s.Id == studentId);
+            if (dbStudent != null)
+            {
+                dbStudent.CopyFieldsFromGivenObject(student);
+            }
+            else
+            {
+                return StatusCode(404);
+            }
 
-            //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(200, default(Student));
-            //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(400);
-            //TODO: Uncomment the next line to return response 401 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(401);
-            //TODO: Uncomment the next line to return response 404 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(404);
-            //TODO: Uncomment the next line to return response 422 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(422, default(List<ErrorMessage>));
-            string exampleJson = null;
-            exampleJson = "{\r\n  \"nat\" : \"AU\",\r\n  \"gender\" : \"female\",\r\n  \"last_name\" : \"Lucas\",\r\n  \"registered\" : \"2014-07-23T03:21:42.259Z\",\r\n  \"title\" : \"Miss\",\r\n  \"id_name\" : \"TFN\",\r\n  \"picture\" : {\r\n    \"thumbnail\" : \"https://randomuser.me/api/portraits/thumb/men/75.jpg\",\r\n    \"large\" : \"https://randomuser.me/api/portraits/men/75.jpg\",\r\n    \"medium\" : \"https://randomuser.me/api/portraits/med/men/75.jpg\"\r\n  },\r\n  \"phone\" : \"03-2662-3559\",\r\n  \"dob\" : \"1964-11-23T00:00:00.000+00:00\",\r\n  \"location\" : {\r\n    \"country\" : \"Australia\",\r\n    \"city\" : \"Tamworth\",\r\n    \"timezone\" : \"330\",\r\n    \"street_number\" : 2595,\r\n    \"postcode\" : \"6066\",\r\n    \"state\" : \"Queensland\",\r\n    \"street_name\" : \"Main Street\"\r\n  },\r\n  \"id\" : 1,\r\n  \"first_name\" : \"Terri\",\r\n  \"email\" : \"terri.lucas@example.com\",\r\n  \"id_value\" : \"230000682\"\r\n}";
-            
-                        var example = exampleJson != null
-                        ? JsonConvert.DeserializeObject<Student>(exampleJson)
-                : default(Student);
-            //TODO: Change the data returned
-            return new ObjectResult(example);
+            db.SaveChanges();
+
+            return StatusCode(200, dbStudent);
         }
     }
 }

@@ -130,6 +130,26 @@ namespace AspNetApiServer.Models
         public Picture Picture { get; set; }
 
         /// <summary>
+        /// Copy and set fields values based on fields from passed object
+        /// </summary>
+        /// <param name="objectToCopy">Object from which will be copy fields values</param>
+        public void CopyFieldsFromGivenObject(Student objectToCopy)
+        {
+            this.Gender = objectToCopy.Gender;
+            this.Title = objectToCopy.Title;
+            this.FirstName = objectToCopy.FirstName;
+            this.LastName = objectToCopy.LastName;
+            this.Email = objectToCopy.Email;
+            this.Dob = objectToCopy.Dob;
+            this.Phone = objectToCopy.Phone;
+            this.IdName = objectToCopy.IdName;
+            this.IdValue = objectToCopy.IdValue;
+            this.Nat = objectToCopy.Nat;
+            this.Location.CopyFieldsFromGivenObject(objectToCopy.Location);
+            this.Picture.CopyFieldsFromGivenObject(objectToCopy.Picture);
+        }
+        
+        /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
