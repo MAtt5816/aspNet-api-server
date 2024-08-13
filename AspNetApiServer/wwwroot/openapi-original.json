@@ -37,6 +37,16 @@
     "/authorize" : {
       "post" : {
         "description" : "Returns JWT token for further authorization.",
+        "requestBody": {
+          "description": "Send authorization data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthData"
+              }
+            }
+          }
+        },
         "responses" : {
           "200" : {
             "content" : {
@@ -52,10 +62,7 @@
             "description" : "unauthorized"
           }
         },
-        "security" : [ {
-          "jwt_token_auth" : [ ]
-        } ],
-        "summary" : "Get authorization JWT token",
+        "summary": "Get authorization JWT token",
         "tags" : [ "general" ]
       }
     },
@@ -320,11 +327,26 @@
       }
     }
   },
-  "components" : {
-    "schemas" : {
-      "HelloWorld" : {
-        "example" : "Hello World!",
-        "type" : "string"
+  "components": {
+    "schemas": {
+      "HelloWorld": {
+        "type": "string",
+        "example": "Hello World!"
+      },
+      "AuthData": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "maxLength": 50,
+            "example": "user1"
+          },
+          "passphrase": {
+            "type": "string",
+            "maxLength": 255,
+            "example": "secret_password123"
+          }
+        }
       },
       "JwtToken" : {
         "example" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
@@ -521,12 +543,8 @@
         "type" : "object"
       }
     },
-    "securitySchemes" : {
-      "jwt_token_auth" : {
-        "scheme" : "basic",
-        "type" : "http"
-      },
-      "student_data_auth" : {
+    "securitySchemes": {
+      "student_data_auth": {
         "bearerFormat" : "JWT",
         "scheme" : "bearer",
         "type" : "http"

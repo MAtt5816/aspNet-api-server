@@ -11,7 +11,11 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Data.Entity.Core;
+using System.Security.Cryptography;
+using System.Text;
 using AspNetApiServer.Attributes;
+using AspNetApiServer.DB;
 using AspNetApiServer.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +24,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Newtonsoft.Json;
 using AspNetApiServer.Models;
+using Microsoft.AspNetCore.Authentication;
 
 namespace AspNetApiServer.Controllers
 { 
@@ -33,16 +38,48 @@ namespace AspNetApiServer.Controllers
         /// Get authorization JWT token
         /// </summary>
         /// <remarks>Returns JWT token for further authorization.</remarks>
+        /// <param name="authData">Authorization data to issue JWT token</param>
         /// <response code="200">successful operation</response>
         /// <response code="401">unauthorized</response>
         [HttpPost]
         [Route("/authorize")]
-        [Authorize(AuthenticationSchemes = BasicAuthenticationHandler.SchemeName)]
         [ValidateModelState]
         [SwaggerOperation("AuthorizePost")]
         [SwaggerResponse(statusCode: 200, type: typeof(string), description: "successful operation")]
-        public virtual IActionResult AuthorizePost()
+        public virtual IActionResult AuthorizePost([FromBody]AuthData? authData)
         {
+            if (authData == null)
+            {
+                return StatusCode(401);
+            }
+            
+            using var db = new StudentDataContext();
+            try
+            {
+                var userFromDb = db.Users.Where(u => u.Username == authData.Username).SingleOrDefault();
+                
+                var crypt = SHA256.Create();
+                var hash = new System.Text.StringBuilder();
+                byte[] crypto = crypt.ComputeHash(Encoding.UTF8.GetBytes(authData.Passphrase + userFromDb?.Salt));
+                foreach (byte theByte in crypto)
+                {
+                    hash.Append(theByte.ToString("x2"));
+                }
+                var passHash = hash.ToString();
+                
+                if (passHash != userFromDb?.Sha256)
+                {
+                    return StatusCode(401, "Invalid Authorization Credentials");
+                }
+
+                Helpers.JwtHelper.Id = userFromDb.Id.ToString();
+                Helpers.JwtHelper.Username = userFromDb.Username;
+            }
+            catch(EntityException e)
+            {
+                return StatusCode(401, "Database connection error: " + e.Message);
+            }
+            
             string token = Helpers.JwtHelper.GenerateToken();
             return StatusCode(200, token);
         }

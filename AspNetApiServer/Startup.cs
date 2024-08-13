@@ -69,10 +69,7 @@ namespace AspNetApiServer
                         NamingStrategy = new CamelCaseNamingStrategy()
                     });
                 });
-
-            services.AddAuthentication(BasicAuthenticationHandler.SchemeName)
-                .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>(BasicAuthenticationHandler.SchemeName, null);
-
+            
             services.AddAuthentication(BearerAuthenticationHandler.SchemeName)
                 .AddScheme<AuthenticationSchemeOptions, BearerAuthenticationHandler>(BearerAuthenticationHandler.SchemeName, null);
             
@@ -102,11 +99,6 @@ namespace AspNetApiServer
                     c.CustomSchemaIds(type => type.FriendlyId(true));
                     c.IncludeXmlComments($"{AppContext.BaseDirectory}{Path.DirectorySeparatorChar}{Assembly.GetEntryAssembly().GetName().Name}.xml");
 
-                    c.AddSecurityDefinition("jwt_token_auth", new OpenApiSecurityScheme
-                    {
-                        Type = SecuritySchemeType.Http,
-                        Scheme = "basic"
-                    });
                     c.AddSecurityDefinition("student_data_auth", new OpenApiSecurityScheme
                     {
                         Type = SecuritySchemeType.Http,
