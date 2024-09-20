@@ -11,7 +11,15 @@ public class StudentDataContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        var connectionStr = System.Configuration.ConfigurationManager.ConnectionStrings["StudentDataContext"].ConnectionString;
+        var connectionStr = Environment.GetEnvironmentVariable("DB_CONNECTION_STR") 
+                            ?? System.Configuration.ConfigurationManager.ConnectionStrings["StudentDataContext"].ConnectionString;
+        
         optionsBuilder.UseMySQL(connectionStr);
+    }
+    
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<User>().ToTable("users");
+        modelBuilder.Entity<Student>().ToTable("students");
     }
 }
