@@ -2,6 +2,11 @@
 
 # Container we use for final publish
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+COPY wait-for-db-start.sh /usr/local/bin/wait-for-db-start.sh
+RUN chmod +x /usr/local/bin/wait-for-db-start.sh
+
+RUN apt update && apt install -y mariadb-client
+
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
@@ -34,6 +39,6 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENV ASPNETCORE_URLS=http://0.0.0.0:5000
-ENTRYPOINT ["dotnet", "AspNetApiServer.dll"]
+ENTRYPOINT ["sh", "-c", "wait-for-db-start.sh -- dotnet AspNetApiServer.dll"]
 
 EXPOSE 5000
